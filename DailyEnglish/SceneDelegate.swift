@@ -25,7 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let isOnboardingCompleted = UserDefaults.standard.bool(forKey: "isOnboardingCompleted")
         
         // Root view controller'ı ayarla
-        let rootView: some View = isOnboardingCompleted ? AnyView(MainView()) : AnyView(OnboardingView())
+        let rootView: some View = isOnboardingCompleted ? AnyView(MainFeedView()) : AnyView(OnboardingView())
         window.rootViewController = UIHostingController(rootView: rootView)
         
         self.window = window
