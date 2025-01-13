@@ -1,5 +1,6 @@
 import SwiftUI
 
+/*
 struct OnboardingPageView: View {
     let page: OnboardingPage
     @Binding var userName: String
@@ -34,13 +35,13 @@ struct OnboardingPageView: View {
                                     Spacer()
                                     if selectedOption == option {
                                         Image(systemName: "checkmark")
-                                            .foregroundColor(Color.green)
+                                            .foregroundColor(Color.white)
                                     }
                                 }
                                 .padding()
                                 .background(
                                     RoundedRectangle(cornerRadius: 10)
-                                        .fill(Color.blue.opacity(0.9))
+                                        .fill(Color.bg)
                                 )
                             }
                         }
@@ -52,13 +53,14 @@ struct OnboardingPageView: View {
             if page.inputField {
                 TextField("Enter your name", text: $userName)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding(.horizontal)
+                    .padding()
+                    .padding(.top)
             }
             
             Spacer()
         }
         .background(
-            Color.black.opacity(0.8)
+            Color.bg.opacity(0.8)
                 .ignoresSafeArea()
         )
     }
@@ -79,3 +81,4 @@ struct OnboardingPageView: View {
         selectedOption: .constant(nil)
     )
 } 
+*/

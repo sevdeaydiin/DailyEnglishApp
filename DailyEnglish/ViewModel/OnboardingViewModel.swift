@@ -8,11 +8,25 @@ class OnboardingViewModel: ObservableObject {
     @Published var selectedGender: String?
     @Published var selectedCommitment: String?
     @Published var selectedTimeSpent: String?
+    @Published var selectedOption: String?
+    
+    var shouldShowContinueButton: Bool {
+        if currentPage.type == .welcome {
+            return true
+        }
+        if currentPage.options != nil {
+            return selectedOption != nil
+        }
+        if currentPage.inputField {
+            return !userName.isEmpty
+        }
+        return true
+    }
     
     let pages: [OnboardingPage] = [
         OnboardingPage(
-            title: "Expand your Vocabulary in 1 minute a day",
-            subtitle: "Learn 10,000+ new words with a new daily habit that takes just 1 minute",
+            title: "A small habit can create a big impact in your life.",
+            subtitle: "Discover the true power of words with just one minute a day. Learn, grow, and unlock your potential starting now.",
             buttonTitle: "Get started",
             options: nil,
             inputField: false,
@@ -20,7 +34,7 @@ class OnboardingViewModel: ObservableObject {
             type: .welcome
         ),
         OnboardingPage(
-            title: "How did you hear about Vocabulary?",
+            title: "How did you hear about\nVocabulary?",
             subtitle: "Select an option to continue",
             buttonTitle: "Continue",
             options: ["TikTok", "Instagram", "Facebook", "App Store", "Web search", "Friend/family", "Other"],
@@ -80,6 +94,7 @@ class OnboardingViewModel: ObservableObject {
     }
     
     func nextPage() {
+        selectedOption = nil // Seçimi sıfırla
         if currentPageIndex < pages.count - 1 {
             currentPageIndex += 1
         } else {
@@ -89,7 +104,6 @@ class OnboardingViewModel: ObservableObject {
     
     func completeOnboarding() {
         UserDefaults.standard.set(true, forKey: "isOnboardingCompleted")
-        // Burada kullanıcı tercihlerini kaydetme işlemleri yapılabilir
     }
     
     func isLastPage() -> Bool {
