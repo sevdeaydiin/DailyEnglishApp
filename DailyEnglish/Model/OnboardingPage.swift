@@ -10,6 +10,8 @@ struct OnboardingPage: Identifiable {
     let skipButton: Bool
     var selectedOption: String?
     let type: OnboardingType
+    let image: String?
+    let showNotificationSettings: Bool
 }
 
 enum OnboardingType {
@@ -20,4 +22,7 @@ enum OnboardingType {
     case name
     case commitment
     case timeSpent
-} 
+    case level
+    case lastText
+    case notifications
+}

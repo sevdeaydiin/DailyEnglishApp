@@ -7,25 +7,42 @@ struct OnboardingView: View {
         ZStack(alignment: .top) {
             Color.background.ignoresSafeArea()
             
-            if viewModel.currentPage.skipButton {
-                HStack {
-                    Spacer()
-                    Button("Skip") {
-                        viewModel.nextPage()
-                    }
-                    .foregroundColor(.text.opacity(0.8))
-                }
-                .padding(.top, 16)
-                .padding(.trailing, 24)
-            }
-            
             VStack(spacing: 0) {
+                if viewModel.currentPage.skipButton {
+                    HStack {
+                        Spacer()
+                        Button("Skip") {
+                            viewModel.nextPage()
+                        }
+                        .foregroundColor(.gray)
+                    }
+                    .padding(.top, 16)
+                    .padding(.trailing, 24)
+                }
+                
+                if viewModel.currentPageIndex > 0 {
+                    OnboardingProgressView(
+                        currentStep: viewModel.currentPageIndex - 1,
+                        totalSteps: viewModel.totalSteps - 1
+                    )
+                    .transition(.opacity)
+                }
+                
+                if let image = viewModel.currentPage.image {
+                    Image(image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 280)
+                        .shadow(color: .colorBrown, radius: 4, y: 2)
+                        .padding(.top, 100)
+                }
+                
                 VStack(spacing: 16) {
                     Text(viewModel.currentPage.title)
                         .font(.system(size: 28, weight: .bold))
                         .multilineTextAlignment(.center)
                         .foregroundColor(.text)
-                        .padding(.top, 80)
+                        .padding(.top, viewModel.currentPage.image == nil ? 80 : 40)
                     
                     if let subtitle = viewModel.currentPage.subtitle {
                         Text(subtitle)
@@ -36,6 +53,11 @@ struct OnboardingView: View {
                 }
                 .padding(.horizontal, 24)
                 
+                if viewModel.currentPage.showNotificationSettings {
+                    NotificationSettingsView(settings: $viewModel.notificationSettings)
+                        .padding(.top, 40)
+                }
+                
                 if let options = viewModel.currentPage.options {
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 12) {
@@ -43,11 +65,13 @@ struct OnboardingView: View {
                                 Button(action: {
                                     viewModel.selectedOption = option
                                 }) {
-                                    HStack {
+                                    HStack(alignment: .center) {
                                         Text(option)
                                             .font(.system(size: 17))
                                             .foregroundColor(.text)
-                                        Spacer()
+                                            .multilineTextAlignment(.leading)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        
                                         if viewModel.selectedOption == option {
                                             Image(systemName: "checkmark.circle.fill")
                                                 .foregroundColor(.text)
@@ -104,15 +128,17 @@ struct OnboardingView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
-                            .background(Color.button)
+                            .background(Color.colorBlue)
                             .cornerRadius(28)
                             .padding(.horizontal, 24)
                     }
+                    .shadow(color: .colorBrown, radius: 4, y: 2)
                     .transition(.opacity)
                     .padding(.bottom, 34)
                 }
             }
         }
         .animation(.easeInOut, value: viewModel.selectedOption)
+        .animation(.easeInOut, value: viewModel.currentPageIndex)
     }
 } 
