@@ -9,9 +9,22 @@ struct OnboardingPage: Identifiable {
     let inputField: Bool
     let skipButton: Bool
     var selectedOption: String?
+    var selectedOptions: Set<String>?
     let type: OnboardingType
     let image: String?
     let showNotificationSettings: Bool
+    let allowMultipleSelection: Bool
+    
+    var hasValidSelection: Bool {
+        if let options = options {
+            if allowMultipleSelection {
+                return selectedOptions?.isEmpty == false
+            } else {
+                return selectedOption != nil
+            }
+        }
+        return true
+    }
 }
 
 enum OnboardingType {
@@ -25,4 +38,6 @@ enum OnboardingType {
     case level
     case lastText
     case notifications
+    case goal
+    case interested
 }

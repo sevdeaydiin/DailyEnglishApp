@@ -34,7 +34,7 @@ struct OnboardingView: View {
                         .scaledToFit()
                         .frame(height: 280)
                         .shadow(color: .colorBrown, radius: 4, y: 2)
-                        .padding(.top, 100)
+                        .padding(.top, 40)
                 }
                 
                 VStack(spacing: 16) {
@@ -63,7 +63,7 @@ struct OnboardingView: View {
                         VStack(spacing: 12) {
                             ForEach(options, id: \.self) { option in
                                 Button(action: {
-                                    viewModel.selectedOption = option
+                                    viewModel.toggleOption(option)
                                 }) {
                                     HStack(alignment: .center) {
                                         Text(option)
@@ -72,7 +72,7 @@ struct OnboardingView: View {
                                             .multilineTextAlignment(.leading)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                         
-                                        if viewModel.selectedOption == option {
+                                        if viewModel.isOptionSelected(option) {
                                             Image(systemName: "checkmark.circle.fill")
                                                 .foregroundColor(.text)
                                         } else {
@@ -139,6 +139,7 @@ struct OnboardingView: View {
             }
         }
         .animation(.easeInOut, value: viewModel.selectedOption)
+        .animation(.easeInOut, value: viewModel.selectedOptions)
         .animation(.easeInOut, value: viewModel.currentPageIndex)
     }
 } 
