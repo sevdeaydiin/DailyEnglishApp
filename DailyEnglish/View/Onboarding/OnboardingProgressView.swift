@@ -20,7 +20,7 @@ struct OnboardingProgressView: View {
                     
                     // Progress bar
                     Rectangle()
-                        .fill(Color.colorBlue)
+                        .fill(Color.colorGreen)
                         .frame(width: geometry.size.width * progress, height: 4)
                         .animation(.spring(response: 0.6, dampingFraction: 0.8), value: progress)
                 }

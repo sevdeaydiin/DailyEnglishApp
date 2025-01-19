@@ -26,4 +26,22 @@ struct NotificationSettings {
     var shouldShowTimeSelection: Bool {
         return frequency > 0
     }
-} 
+    
+    /// Tarihi veritabanına uygun formatta döndürür
+    func formattedDate(_ date: Date?) -> String {
+        guard let date = date else { return "" }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm" // Örnek format: 09:00
+        return dateFormatter.string(from: date)
+    }
+    
+    /// Veritabanına gönderilecek başlangıç zamanı
+    var startTimeString: String {
+        return formattedDate(startTime)
+    }
+    
+    /// Veritabanına gönderilecek bitiş zamanı
+    var endTimeString: String {
+        return formattedDate(endTime)
+    }
+}

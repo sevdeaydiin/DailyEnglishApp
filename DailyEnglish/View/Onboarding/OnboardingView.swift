@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    @StateObject private var viewModel = OnboardingViewModel()
+    @StateObject private var viewModel = OnboardingViewModel(onboardingManager: OnboardingManager(networkManager: NetworkManager()))
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -34,19 +34,19 @@ struct OnboardingView: View {
                         .scaledToFit()
                         .frame(height: 280)
                         .shadow(color: .colorBrown, radius: 4, y: 2)
-                        .padding(.top, 40)
+                        .padding(.top, 80)
                 }
                 
                 VStack(spacing: 16) {
                     Text(viewModel.currentPage.title)
-                        .font(.system(size: 28, weight: .bold))
+                        .font(.custom("Figtree-VariableFont_wght-Black", size: 28))
                         .multilineTextAlignment(.center)
                         .foregroundColor(.text)
                         .padding(.top, viewModel.currentPage.image == nil ? 80 : 40)
                     
                     if let subtitle = viewModel.currentPage.subtitle {
                         Text(subtitle)
-                            .font(.system(size: 17))
+                            .font(.custom("Figtree-Light", size: 17))
                             .multilineTextAlignment(.center)
                             .foregroundColor(.text)
                     }
@@ -74,10 +74,10 @@ struct OnboardingView: View {
                                         
                                         if viewModel.isOptionSelected(option) {
                                             Image(systemName: "checkmark.circle.fill")
-                                                .foregroundColor(.text)
+                                                .foregroundColor(.background)
                                         } else {
                                             Circle()
-                                                .strokeBorder(Color.gray.opacity(0.5), lineWidth: 1)
+                                                .strokeBorder(Color.colorGreen.opacity(0.5), lineWidth: 1)
                                                 .frame(width: 24, height: 24)
                                         }
                                     }
@@ -85,7 +85,7 @@ struct OnboardingView: View {
                                     .padding(.vertical, 16)
                                     .background(
                                         RoundedRectangle(cornerRadius: 20)
-                                            .fill(Color.gray.opacity(0.1))
+                                            .fill(viewModel.isOptionSelected(option) ? Color.colorGreen.opacity(0.7) :  Color.colorGreen.opacity(0.1))
                                     )
                                 }
                             }
@@ -128,11 +128,11 @@ struct OnboardingView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
-                            .background(Color.colorBlue)
+                            .background(Color.colorGreen)
                             .cornerRadius(28)
                             .padding(.horizontal, 24)
                     }
-                    .shadow(color: .colorBrown, radius: 4, y: 2)
+                    .shadow(color: .colorBrown, radius: 2, y: 2)
                     .transition(.opacity)
                     .padding(.bottom, 34)
                 }
@@ -142,4 +142,14 @@ struct OnboardingView: View {
         .animation(.easeInOut, value: viewModel.selectedOptions)
         .animation(.easeInOut, value: viewModel.currentPageIndex)
     }
-} 
+    
+    /*init() {
+        for familyName in UIFont.familyNames {
+            print(familyName)
+            
+            for fontName in UIFont.fontNames(forFamilyName: familyName) {
+                print(" ---> \(fontName)")
+            }
+        }
+    }*/
+}

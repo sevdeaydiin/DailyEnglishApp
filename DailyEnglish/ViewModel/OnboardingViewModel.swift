@@ -8,9 +8,18 @@ class OnboardingViewModel: ObservableObject {
     @Published var selectedGender: String?
     @Published var selectedCommitment: String?
     @Published var selectedTimeSpent: String?
+    @Published var selectedLevel: String?
+    @Published var selectedGoals: Set<String> = []
+    @Published var selectedInterests: Set<String> = []
     @Published var selectedOption: String?
     @Published var selectedOptions: Set<String> = []
     @Published var notificationSettings = NotificationSettings()
+    
+    private let onboardingManager: OnboardingService
+    
+    init(onboardingManager: OnboardingService) {
+        self.onboardingManager = onboardingManager
+    }
     
     var totalSteps: Int {
         pages.count + 1
@@ -72,18 +81,18 @@ class OnboardingViewModel: ObservableObject {
             showNotificationSettings: false,
             allowMultipleSelection: false
         ),
-        OnboardingPage(
-            title: "Tailor your word recommendations",
-            subtitle: "Answer a few questions to get personalized word suggestions",
-            buttonTitle: "Continue",
-            options: nil,
-            inputField: false,
-            skipButton: false,
-            type: .welcome,
-            image: "book",
-            showNotificationSettings: false,
-            allowMultipleSelection: false
-        ),
+//        OnboardingPage(
+//            title: "Tailor your word recommendations",
+//            subtitle: "Answer a few questions to get personalized word suggestions",
+//            buttonTitle: "Continue",
+//            options: nil,
+//            inputField: false,
+//            skipButton: false,
+//            type: .welcome,
+//            image: "book",
+//            showNotificationSettings: false,
+//            allowMultipleSelection: false
+//        ),
         OnboardingPage(
             title: "How old are you?",
             subtitle: "Your age is used yo personalize your content",
@@ -131,18 +140,18 @@ class OnboardingViewModel: ObservableObject {
             showNotificationSettings: false,
             allowMultipleSelection: false
         ),
-        OnboardingPage(
-            title: "Tailor your word recommendations",
-            subtitle: "Answer a few questions to get personalized word suggestions",
-            buttonTitle: "Continue",
-            options: nil,
-            inputField: false,
-            skipButton: false,
-            type: .welcome,
-            image: "book",
-            showNotificationSettings: false,
-            allowMultipleSelection: false
-        ),
+//        OnboardingPage(
+//            title: "Tailor your word recommendations",
+//            subtitle: "Answer a few questions to get personalized word suggestions",
+//            buttonTitle: "Continue",
+//            options: nil,
+//            inputField: false,
+//            skipButton: false,
+//            type: .welcome,
+//            image: "book",
+//            showNotificationSettings: false,
+//            allowMultipleSelection: false
+//        ),
         OnboardingPage(
             title: "How many days in a row will you learn words?",
             subtitle: "Commit to building a learning habit by coming back every day",
@@ -294,7 +303,9 @@ class OnboardingViewModel: ObservableObject {
             }
             currentPageIndex += 1
         } else {
-            completeOnboarding()
+            Task {
+                await onboardingComplete()
+            }
         }
     }
     
@@ -310,23 +321,58 @@ class OnboardingViewModel: ObservableObject {
         }
     }
     
-    func completeOnboarding() {
-        UserDefaults.standard.set(true, forKey: "isOnboardingCompleted")
-        UserDefaults.standard.set(userName, forKey: "userName")
-        if let selectedOption = selectedOption {
-            UserDefaults.standard.set(selectedOption, forKey: "userLevel")
-        }
-        if !selectedOptions.isEmpty {
-            UserDefaults.standard.set(Array(selectedOptions), forKey: "userMotivations")
+    func onboardingComplete() async {
+        guard let deviceId = await UIDevice.current.identifierForVendor?.uuidString else {
+            print("Could not get device ID")
+            return
         }
         
-        DispatchQueue.main.async {
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first {
-                window.rootViewController = UIHostingController(rootView: MainFeedView())
+        do {
+            _ = try await onboardingManager.onboardingComplete(
+                deviceId: "testDevice",
+                name: userName,
+                source: selectedOption ?? "",
+                age: selectedAge ?? "",
+                gender: selectedGender ?? "",
+                commitment: selectedCommitment ?? "",
+                timeSpent: selectedTimeSpent ?? "",
+                notificationStartTime: notificationSettings.startTimeString,
+                notificationEndTime: notificationSettings.endTimeString,
+                notificationFrequency: notificationSettings.frequency,
+                level: selectedLevel ?? "",
+                goal: Array(selectedGoals),
+                interested: Array(selectedInterests))
+            
+            DispatchQueue.main.async {
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let window = windowScene.windows.first {
+                    window.rootViewController = UIHostingController(rootView: MainFeedView())
+                }
             }
+        } catch let error as NetworkError {
+            print(error)
+        } catch {
+            print(NetworkError.unknown)
         }
     }
+    
+//    func completeOnboarding() {
+//        UserDefaults.standard.set(true, forKey: "isOnboardingCompleted")
+//        UserDefaults.standard.set(userName, forKey: "userName")
+//        if let selectedOption = selectedOption {
+//            UserDefaults.standard.set(selectedOption, forKey: "userLevel")
+//        }
+//        if !selectedOptions.isEmpty {
+//            UserDefaults.standard.set(Array(selectedOptions), forKey: "userMotivations")
+//        }
+//        
+//        DispatchQueue.main.async {
+//            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//               let window = windowScene.windows.first {
+//                window.rootViewController = UIHostingController(rootView: MainFeedView())
+//            }
+//        }
+//    }
     
     func isLastPage() -> Bool {
         return currentPageIndex == pages.count
