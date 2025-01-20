@@ -4,6 +4,7 @@ import SwiftUI
 class OnboardingViewModel: ObservableObject {
     @Published var currentPageIndex = 0
     @Published var userName = ""
+    @Published var selectedSource: String?
     @Published var selectedAge: String?
     @Published var selectedGender: String?
     @Published var selectedCommitment: String?
@@ -60,6 +61,7 @@ class OnboardingViewModel: ObservableObject {
             skipButton: false,
             type: .welcome,
             image: "book",
+            animation: nil,
             showNotificationSettings: false,
             allowMultipleSelection: false
         ),
@@ -78,21 +80,22 @@ class OnboardingViewModel: ObservableObject {
             skipButton: false,
             type: .source,
             image: nil,
+            animation: nil,
             showNotificationSettings: false,
             allowMultipleSelection: false
         ),
-//        OnboardingPage(
-//            title: "Tailor your word recommendations",
-//            subtitle: "Answer a few questions to get personalized word suggestions",
-//            buttonTitle: "Continue",
-//            options: nil,
-//            inputField: false,
-//            skipButton: false,
-//            type: .welcome,
-//            image: "book",
-//            showNotificationSettings: false,
-//            allowMultipleSelection: false
-//        ),
+        //        OnboardingPage(
+        //            title: "Tailor your word recommendations",
+        //            subtitle: "Answer a few questions to get personalized word suggestions",
+        //            buttonTitle: "Continue",
+        //            options: nil,
+        //            inputField: false,
+        //            skipButton: false,
+        //            type: .welcome,
+        //            image: "book",
+        //            showNotificationSettings: false,
+        //            allowMultipleSelection: false
+        //        ),
         OnboardingPage(
             title: "How old are you?",
             subtitle: "Your age is used yo personalize your content",
@@ -109,6 +112,7 @@ class OnboardingViewModel: ObservableObject {
             skipButton: false,
             type: .age,
             image: nil,
+            animation: nil,
             showNotificationSettings: false,
             allowMultipleSelection: false
         ),
@@ -125,6 +129,7 @@ class OnboardingViewModel: ObservableObject {
             skipButton: false,
             type: .gender,
             image: nil,
+            animation: nil,
             showNotificationSettings: false,
             allowMultipleSelection: false
         ),
@@ -137,21 +142,22 @@ class OnboardingViewModel: ObservableObject {
             skipButton: false,
             type: .name,
             image: nil,
+            animation: nil,
             showNotificationSettings: false,
             allowMultipleSelection: false
         ),
-//        OnboardingPage(
-//            title: "Tailor your word recommendations",
-//            subtitle: "Answer a few questions to get personalized word suggestions",
-//            buttonTitle: "Continue",
-//            options: nil,
-//            inputField: false,
-//            skipButton: false,
-//            type: .welcome,
-//            image: "book",
-//            showNotificationSettings: false,
-//            allowMultipleSelection: false
-//        ),
+        //        OnboardingPage(
+        //            title: "Tailor your word recommendations",
+        //            subtitle: "Answer a few questions to get personalized word suggestions",
+        //            buttonTitle: "Continue",
+        //            options: nil,
+        //            inputField: false,
+        //            skipButton: false,
+        //            type: .welcome,
+        //            image: "book",
+        //            showNotificationSettings: false,
+        //            allowMultipleSelection: false
+        //        ),
         OnboardingPage(
             title: "How many days in a row will you learn words?",
             subtitle: "Commit to building a learning habit by coming back every day",
@@ -165,6 +171,7 @@ class OnboardingViewModel: ObservableObject {
             skipButton: false,
             type: .commitment,
             image: nil,
+            animation: nil,
             showNotificationSettings: false,
             allowMultipleSelection: false
         ),
@@ -181,6 +188,7 @@ class OnboardingViewModel: ObservableObject {
             skipButton: false,
             type: .timeSpent,
             image: nil,
+            animation: nil,
             showNotificationSettings: false,
             allowMultipleSelection: false
         ),
@@ -193,6 +201,7 @@ class OnboardingViewModel: ObservableObject {
             skipButton: false,
             type: .notifications,
             image: nil,
+            animation: nil,
             showNotificationSettings: true,
             allowMultipleSelection: false
         ),
@@ -209,6 +218,7 @@ class OnboardingViewModel: ObservableObject {
             skipButton: true,
             type: .level,
             image: nil,
+            animation: nil,
             showNotificationSettings: false,
             allowMultipleSelection: false
         ),
@@ -227,6 +237,7 @@ class OnboardingViewModel: ObservableObject {
             skipButton: false,
             type: .goal,
             image: nil,
+            animation: nil,
             showNotificationSettings: false,
             allowMultipleSelection: true
         ),
@@ -246,6 +257,7 @@ class OnboardingViewModel: ObservableObject {
             skipButton: false,
             type: .interested,
             image: nil,
+            animation: nil,
             showNotificationSettings: false,
             allowMultipleSelection: true
         )
@@ -263,6 +275,7 @@ class OnboardingViewModel: ObservableObject {
                 skipButton: false,
                 type: .lastText,
                 image: nil,
+                animation: "successfully",
                 showNotificationSettings: false,
                 allowMultipleSelection: false
             )
@@ -291,16 +304,33 @@ class OnboardingViewModel: ObservableObject {
     }
     
     func nextPage() {
-        if currentPage.allowMultipleSelection {
-            selectedOptions = []
-        } else {
-            selectedOption = nil
-        }
         
         if currentPageIndex < pages.count {
             if currentPage.type == .notifications {
                 requestNotificationPermissions()
             }
+            
+            switch currentPage.type {
+            case .source:
+                selectedSource = selectedOption
+            case .age:
+                selectedAge = selectedOption
+            case .gender:
+                selectedGender = selectedOption
+            case .commitment:
+                selectedCommitment = selectedOption
+            case .timeSpent:
+                selectedTimeSpent = selectedOption
+            case .level:
+                selectedLevel = selectedOption
+            case .goal:
+                selectedGoals = selectedOptions
+                selectedOptions = []
+            case .interested:
+                selectedInterests = selectedOptions
+            default : break
+            }
+            
             currentPageIndex += 1
         } else {
             Task {
@@ -329,9 +359,9 @@ class OnboardingViewModel: ObservableObject {
         
         do {
             _ = try await onboardingManager.onboardingComplete(
-                deviceId: "testDevice",
+                deviceId: deviceId,
                 name: userName,
-                source: selectedOption ?? "",
+                source: selectedSource ?? "",
                 age: selectedAge ?? "",
                 gender: selectedGender ?? "",
                 commitment: selectedCommitment ?? "",
@@ -342,39 +372,22 @@ class OnboardingViewModel: ObservableObject {
                 level: selectedLevel ?? "",
                 goal: Array(selectedGoals),
                 interested: Array(selectedInterests))
-            
-            DispatchQueue.main.async {
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let window = windowScene.windows.first {
-                    window.rootViewController = UIHostingController(rootView: MainFeedView())
-                }
-            }
-        } catch let error as NetworkError {
-            print(error)
         } catch {
-            print(NetworkError.unknown)
+            print(error.localizedDescription)
+        }
+        
+        // Onboarding tamamlandığında UserDefaults'a kaydet
+        UserDefaults.standard.set(true, forKey: "isOnboardingCompleted")
+        
+        DispatchQueue.main.async {
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                window.rootViewController = UIHostingController(rootView: MainFeedView())
+            }
         }
     }
-    
-//    func completeOnboarding() {
-//        UserDefaults.standard.set(true, forKey: "isOnboardingCompleted")
-//        UserDefaults.standard.set(userName, forKey: "userName")
-//        if let selectedOption = selectedOption {
-//            UserDefaults.standard.set(selectedOption, forKey: "userLevel")
-//        }
-//        if !selectedOptions.isEmpty {
-//            UserDefaults.standard.set(Array(selectedOptions), forKey: "userMotivations")
-//        }
-//        
-//        DispatchQueue.main.async {
-//            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-//               let window = windowScene.windows.first {
-//                window.rootViewController = UIHostingController(rootView: MainFeedView())
-//            }
-//        }
-//    }
     
     func isLastPage() -> Bool {
         return currentPageIndex == pages.count
     }
-} 
+}
