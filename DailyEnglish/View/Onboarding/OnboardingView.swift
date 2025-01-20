@@ -37,6 +37,12 @@ struct OnboardingView: View {
                         .padding(.top, 80)
                 }
                 
+                if let animation = viewModel.currentPage.animation {
+                    LottieView(animationName: animation, loopMode: .playOnce)
+                        .frame(width: 350, height: 350)
+                        .padding(.bottom, -100)
+                }
+                
                 VStack(spacing: 16) {
                     Text(viewModel.currentPage.title)
                         .font(.custom("Figtree-VariableFont_wght-Black", size: 28))

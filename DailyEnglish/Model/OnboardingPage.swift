@@ -12,6 +12,7 @@ struct OnboardingPage: Identifiable {
     var selectedOptions: Set<String>?
     let type: OnboardingType
     let image: String?
+    let animation: String?
     let showNotificationSettings: Bool
     let allowMultipleSelection: Bool
     
@@ -36,8 +37,8 @@ enum OnboardingType {
     case commitment
     case timeSpent
     case level
-    case lastText
     case notifications
     case goal
     case interested
+    case lastText
 }
