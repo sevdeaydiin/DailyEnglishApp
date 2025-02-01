@@ -19,7 +19,7 @@ struct SettingsView: View {
                             .foregroundColor(colorScheme == .dark ? .white : .black)
                     }
                     
-                    NavigationLink(destination: Text("Theme Settings")) {
+                    NavigationLink(destination: ThemesView()) {
                         Label("Themes", systemImage: "paintpalette.fill")
                             .foregroundColor(colorScheme == .dark ? .white : .black)
                     }

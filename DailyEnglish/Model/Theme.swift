@@ -27,10 +27,8 @@ enum ThemeType: String {
     
     var foregroundColorName: String {
         switch self {
-        case .classicDark:
+        case .classicDark, .coral:
             return "theme_classic_dark_fg"
-        case .coral:
-            return "theme_coral_fg"
         case .minimalLight:
             return "theme_minimal_light_fg"
         case .forest, .cappadocia, .modern:
