@@ -64,7 +64,13 @@ struct OnboardingView: View {
                         .padding(.top, 40)
                 }
                 
-                if let options = viewModel.currentPage.options {
+                if viewModel.currentPage.type == .theme {
+                    ThemeGridView(selectedTheme: Binding(
+                        get: { viewModel.selectedOption },
+                        set: { viewModel.selectedOption = $0 }
+                    ))
+                    .padding(.top, 32)
+                } else if let options = viewModel.currentPage.options {
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 12) {
                             ForEach(options, id: \.self) { option in
@@ -158,4 +164,42 @@ struct OnboardingView: View {
             }
         }
     }*/
+}
+
+struct ThemeGridView: View {
+    @Binding var selectedTheme: String?
+    
+    let themes: [(name: String, image: String)] = [
+        ("Classic Dark", "classic_dark"),
+        ("Coral", "coral"),
+        ("Minimal Light", "minimal_light"),
+        ("Forest", "forest"),
+        ("Cappadocia", "cappadocia"),
+        ("Modern", "modern")
+    ]
+    
+    var body: some View {
+        LazyVGrid(columns: [
+            GridItem(.flexible()),
+            GridItem(.flexible()),
+            GridItem(.flexible())
+        ], spacing: 16) {
+            ForEach(themes, id: \.name) { theme in
+                Button(action: {
+                    selectedTheme = theme.name
+                }) {
+                    Image(theme.image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 100, height: 100)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(selectedTheme == theme.name ? Color.colorGreen : Color.clear, lineWidth: 3)
+                        )
+                }
+            }
+        }
+        .padding(.horizontal, 24)
+    }
 }

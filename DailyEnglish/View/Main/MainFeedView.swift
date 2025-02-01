@@ -3,10 +3,22 @@ import SwiftUI
 struct MainFeedView: View {
     @StateObject private var viewModel = MainFeedViewModel()
     @State private var showingSettings = false
+    @StateObject private var themeManager = ThemeManager.shared
     
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .topTrailing) {
+                //themeManager.currentTheme.backgroundColor.ignoresSafeArea()
+                ZStack {
+                    themeManager.currentTheme.backgroundImage
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.black.opacity(0.5))
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .ignoresSafeArea()
+                
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(spacing: 0) {
                         ForEach(viewModel.words) { word in
@@ -30,15 +42,16 @@ struct MainFeedView: View {
                 }) {
                     Image(systemName: "gearshape.fill")
                         .font(.title2)
-                        .foregroundColor(.text)
+                        .foregroundColor(themeManager.currentTheme.textColor)
                 }
-                .padding(.top, 16)
+                .padding(.top, 64)
                 .padding(.trailing, 24)
             }
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView()
         }
+        .ignoresSafeArea()
     }
 }
 
@@ -50,6 +63,7 @@ struct WordCardWithActions: View {
     let onVoice: () -> Void
     let onLike: () -> Void
     let onSave: () -> Void
+    @StateObject private var themeManager = ThemeManager.shared
     
     var body: some View {
         VStack {
@@ -104,12 +118,11 @@ struct SettingsView: View {
     }
     
     private func clearAllData() {
-        // Tüm UserDefaults verilerini temizle
         UserDefaults.standard.removeObject(forKey: "isOnboardingCompleted")
         UserDefaults.standard.removeObject(forKey: "userName")
         UserDefaults.standard.removeObject(forKey: "userLevel")
+        UserDefaults.standard.removeObject(forKey: "selectedTheme")
         
-        // Ana ekranı Onboarding'e yönlendir
         DispatchQueue.main.async {
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let window = windowScene.windows.first {
@@ -117,4 +130,4 @@ struct SettingsView: View {
             }
         }
     }
-} 
+}

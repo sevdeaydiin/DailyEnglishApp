@@ -15,6 +15,7 @@ class OnboardingViewModel: ObservableObject {
     @Published var selectedOption: String?
     @Published var selectedOptions: Set<String> = []
     @Published var notificationSettings = NotificationSettings()
+    @Published var selectedTheme: String?
     
     private let onboardingManager: OnboardingService
     
@@ -260,8 +261,27 @@ class OnboardingViewModel: ObservableObject {
             animation: nil,
             showNotificationSettings: false,
             allowMultipleSelection: true
+        ),
+        OnboardingPage(
+            title: "Which icon style do you like the most?",
+            subtitle: "This will be the app's icon on your phone's Home Screen",
+            buttonTitle: "Continue",
+            options: [
+                "Classic Light",
+                "Classic Dark",
+                "Coral",
+                "Minimal Light",
+                "Gradient Dark",
+                "Bookmark"
+            ],
+            inputField: false,
+            skipButton: false,
+            type: .theme,
+            image: nil,
+            animation: nil,
+            showNotificationSettings: false,
+            allowMultipleSelection: false
         )
-        
     ]
     
     var currentPage: OnboardingPage {
@@ -304,7 +324,6 @@ class OnboardingViewModel: ObservableObject {
     }
     
     func nextPage() {
-        
         if currentPageIndex < pages.count {
             if currentPage.type == .notifications {
                 requestNotificationPermissions()
@@ -328,6 +347,10 @@ class OnboardingViewModel: ObservableObject {
                 selectedOptions = []
             case .interested:
                 selectedInterests = selectedOptions
+            case .theme:
+                if let selectedTheme = selectedOption {
+                    ThemeManager.shared.setTheme(selectedTheme)
+                }
             default : break
             }
             

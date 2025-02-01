@@ -1,0 +1,15 @@
+{
+  "images" : [
+    {
+      "filename" : "Black and White Simple Motivation Phone Wallpaper (2).png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

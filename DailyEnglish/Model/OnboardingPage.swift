@@ -41,4 +41,5 @@ enum OnboardingType {
     case goal
     case interested
     case lastText
+    case theme
 }
