@@ -23,7 +23,7 @@ struct GeneralView: View {
                 .listRowBackground(colorScheme == .dark ? Color(UIColor.secondarySystemBackground) : Color.white)
                 
                 Section("MAKE IT YOURS") {
-                    NavigationLink(destination: Text("Manage subscription")) {
+                    NavigationLink(destination: ContentPreferencesView().navigationBarBackButtonHidden()) {
                         Label("Content Preferences", systemImage: "text.page.fill")
                             .foregroundColor(colorScheme == .dark ? .white : .black)
                     }
@@ -47,7 +47,7 @@ struct GeneralView: View {
                 .listRowBackground(colorScheme == .dark ? Color(UIColor.secondarySystemBackground) : Color.white)
                 
                 Section("Account") {
-                    NavigationLink(destination: Text("Manage subscription")) {
+                    NavigationLink(destination: SignInView()) {
                         Label("Sign In", systemImage: "person.fill")
                             .foregroundColor(colorScheme == .dark ? .white : .black)
                     }
