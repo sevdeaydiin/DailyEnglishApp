@@ -15,7 +15,7 @@ struct GeneralView: View {
         NavigationView {
             List {
                 Section("PREMIUM") {
-                    NavigationLink(destination: Text("Manage subscription")) {
+                    NavigationLink(destination: ContentPreferencesView()) {
                         Label("Manage subscription", systemImage: "sparkles")
                             .foregroundColor(colorScheme == .dark ? .white : .black)
                     }
