@@ -1,10 +1,3 @@
-//
-//  WordManager.swift
-//  DailyEnglish
-//
-//  Created by Sevde Aydın on 1/13/25.
-//
-
 import Foundation
 import CoreData
 
@@ -12,6 +5,7 @@ class WordManager {
     static let shared = WordManager()
     private init() {}
 
+    // Core Data stack
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "DailyEnglish")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
@@ -22,6 +16,7 @@ class WordManager {
         return container
     }()
 
+    // Create a new word
     func createWord(definition: String, isLiked: Bool, isSaved: Bool, isShared: Bool, language: String, pronunciation: String, word: String) {
         let context = persistentContainer.viewContext
         let newWord = Word(context: context)
@@ -36,6 +31,7 @@ class WordManager {
         saveContext()
     }
 
+    // Load sample words
     func loadSampleWords() {
         let sampleWords = [
             ("Apple", "A fruit that is red, green, or yellow.", false, false, false, "English", "ˈæp.əl"),
@@ -55,6 +51,7 @@ class WordManager {
         }
     }
 
+    // Fetch all words
     func fetchWords() -> [Word]? {
         let context = persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<Word> = Word.fetchRequest()
@@ -67,6 +64,7 @@ class WordManager {
         }
     }
 
+    // Update a word
     func updateWord(word: Word, definition: String, isLiked: Bool, isSaved: Bool, isShared: Bool, language: String, pronunciation: String) {
         word.definition = definition
         word.isLiked = isLiked
@@ -78,12 +76,14 @@ class WordManager {
         saveContext()
     }
 
+    // Delete a word
     func deleteWord(word: Word) {
         let context = persistentContainer.viewContext
         context.delete(word)
         saveContext()
     }
 
+    // Save context
     private func saveContext() {
         let context = persistentContainer.viewContext
         if context.hasChanges {
@@ -95,4 +95,4 @@ class WordManager {
             }
         }
     }
-}
+} 
