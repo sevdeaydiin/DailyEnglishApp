@@ -70,9 +70,9 @@ struct WordCardWithActions: View {
             Spacer()
             
             WordCardView(
-                word: word.word,
-                phonetic: word.phonetic,
-                definition: word.definition
+                word: word.word ?? "",
+                phonetic: word.pronunciation ?? "",
+                definition: word.definition ?? ""
             )
             .transition(.scale.combined(with: .opacity))
             
