@@ -1,25 +1,27 @@
 import SwiftUI
 
 struct WordCardView: View {
-    @Environment(\.colorScheme) private var colorScheme
     let word: String
     let phonetic: String
     let definition: String
+    @StateObject private var themeManager = ThemeManager.shared
     
     var body: some View {
         VStack(spacing: 16) {
             Text(word)
-                .font(.system(size: 32, weight: .bold, design: .default))
-                .foregroundColor(.primary)
+                .font(.largeTitle)
+                .bold()
+                .foregroundColor(themeManager.currentTheme.textColor)
             
             Text(phonetic)
-                .font(.system(size: 18, weight: .regular, design: .default))
-                .foregroundColor(.secondary)
+                .font(.title3)
+                .foregroundColor(themeManager.currentTheme.textColor.opacity(0.6))
             
             Text(definition)
-                .font(.system(size: 16, weight: .regular, design: .default))
-                .foregroundColor(.primary)
+                .font(.body)
                 .multilineTextAlignment(.center)
+                .foregroundColor(themeManager.currentTheme.textColor)
+                .padding(.horizontal, 24)
         }
     }
 } 

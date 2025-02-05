@@ -1,36 +1,26 @@
 import Foundation
 import AVFoundation
 import SwiftUI
+import CoreData
 
 class MainFeedViewModel: ObservableObject {
     @Published var words: [Word] = []
     @Published var currentIndex: Int = 0
     @Published var isLoading = false
     private var audioPlayer: AVPlayer?
+    private let wordManager = WordManager.shared
     
     init() {
-        // TODO: Initialize with actual word data
-        loadSampleWords()
+        loadWords()
     }
     
-    private func loadSampleWords() {
-        words = [
-            Word(
-                word: "Serendipity",
-                phonetic: "/ˌserənˈdipəti/",
-                definition: "The occurrence and development of events by chance in a happy or beneficial way"
-            ),
-            Word(
-                word: "Ephemeral",
-                phonetic: "/əˈfem(ə)rəl/",
-                definition: "Lasting for a very short time"
-            ),
-            Word(
-                word: "Ubiquitous",
-                phonetic: "/yo͞oˈbikwədəs/",
-                definition: "Present, appearing, or found everywhere"
-            )
-        ]
+    private func loadWords() {
+        if let fetchedWords = wordManager.fetchWords(), !fetchedWords.isEmpty {
+            self.words = fetchedWords
+        } else {
+            wordManager.loadSampleWords()
+            self.words = wordManager.fetchWords() ?? []
+        }
     }
     
     var currentWord: Word? {
@@ -49,26 +39,48 @@ class MainFeedViewModel: ObservableObject {
     }
     
     func toggleLike() {
-        guard var word = currentWord else { return }
-        word.isLiked.toggle()
-        words[currentIndex] = word
-        // TODO: Persist changes
+        guard let word = currentWord else { return }
+        wordManager.updateWord(
+            word: word,
+            definition: word.definition ?? "",
+            isLiked: !word.isLiked,
+            isSaved: word.isSaved,
+            isShared: word.isShared,
+            language: word.language ?? "English",
+            pronunciation: word.pronunciation ?? ""
+        )
+        loadWords()
     }
     
     func toggleSave() {
-        guard var word = currentWord else { return }
-        word.isSaved.toggle()
-        words[currentIndex] = word
-        // TODO: Persist changes
+        guard let word = currentWord else { return }
+        wordManager.updateWord(
+            word: word,
+            definition: word.definition ?? "",
+            isLiked: word.isLiked,
+            isSaved: !word.isSaved,
+            isShared: word.isShared,
+            language: word.language ?? "English",
+            pronunciation: word.pronunciation ?? ""
+        )
+        loadWords()
     }
     
     func playPronunciation() {
-        guard let audioUrl = currentWord?.audioUrl else { return }
-        audioPlayer = AVPlayer(url: audioUrl)
-        audioPlayer?.play()
+        // TODO: Implement audio playback functionality
     }
     
     func share() {
-        // TODO: Implement share functionality
+        guard let word = currentWord else { return }
+        wordManager.updateWord(
+            word: word,
+            definition: word.definition ?? "",
+            isLiked: word.isLiked,
+            isSaved: word.isSaved,
+            isShared: true,
+            language: word.language ?? "English",
+            pronunciation: word.pronunciation ?? ""
+        )
+        loadWords()
     }
 } 

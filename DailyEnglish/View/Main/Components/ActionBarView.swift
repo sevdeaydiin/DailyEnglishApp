@@ -7,33 +7,33 @@ struct ActionBarView: View {
     let onSave: () -> Void
     let isLiked: Bool
     let isSaved: Bool
+    @StateObject private var themeManager = ThemeManager.shared
     
     var body: some View {
-        HStack(spacing: 32) {
+        HStack(spacing: 40) {
             Button(action: onShare) {
                 Image(systemName: "square.and.arrow.up")
-                    .imageScale(.large)
-                    .foregroundColor(.primary)
+                    .font(.title2)
+                    .foregroundColor(themeManager.currentTheme.textColor)
             }
             
             Button(action: onVoice) {
                 Image(systemName: "speaker.wave.2")
-                    .imageScale(.large)
-                    .foregroundColor(.primary)
+                    .font(.title2)
+                    .foregroundColor(themeManager.currentTheme.textColor)
             }
             
             Button(action: onLike) {
                 Image(systemName: isLiked ? "heart.fill" : "heart")
-                    .imageScale(.large)
-                    .foregroundColor(isLiked ? .red : .primary)
+                    .font(.title2)
+                    .foregroundColor(isLiked ? .red : themeManager.currentTheme.textColor)
             }
             
             Button(action: onSave) {
                 Image(systemName: isSaved ? "bookmark.fill" : "bookmark")
-                    .imageScale(.large)
-                    .foregroundColor(isSaved ? .blue : .primary)
+                    .font(.title2)
+                    .foregroundColor(isSaved ? .yellow : themeManager.currentTheme.textColor)
             }
         }
-        .padding()
     }
 } 
